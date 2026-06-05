@@ -31,13 +31,24 @@ export default function SignupPage() {
     const userId = data.user?.id
 
     if (userId) {
-      await supabase.from('profiles').update({ full_name: fullName }).eq('id', userId)
-      await supabase.from('stores').insert({
-        owner_id: userId,
-        store_name: storeName,
-        whatsapp_number: whatsapp,
-        status: 'pending',
+      const res = await fetch('/api/create-store', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          userId,
+          fullName,
+          storeName,
+          whatsappNumber: whatsapp,
+        }),
       })
+
+      const result = await res.json()
+
+      if (!res.ok) {
+        setError(result.error || 'Something went wrong')
+        setLoading(false)
+        return
+      }
     }
 
     setLoading(false)
