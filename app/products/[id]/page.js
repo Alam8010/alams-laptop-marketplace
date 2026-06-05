@@ -22,7 +22,7 @@ export default async function ProductPage({ params }) {
     <div style={{ maxWidth: '900px', margin: '0 auto', padding: '24px 16px' }}>
       {/* Header */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px', borderBottom: '1px solid #eee', paddingBottom: '16px' }}>
-        <Link href="/" style={{ textDecoration: 'none', color: '#000', fontWeight: 'bold', fontSize: '20px' }}>💻 laptopsellers</Link>
+        <Link href="/" style={{ textDecoration: 'none', color: '#000', fontWeight: 'bold', fontSize: '20px' }}> laptopsellers</Link>
         <Link href="/" style={{ textDecoration: 'none', color: '#555' }}>← Back to listings</Link>
       </div>
 
@@ -52,7 +52,7 @@ export default async function ProductPage({ params }) {
               )}
             </>
           ) : (
-            <div style={{ width: '100%', height: '280px', background: '#f5f5f5', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '60px' }}>💻</div>
+            <div style={{ width: '100%', height: '280px', background: '#f5f5f5', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '60px' }}></div>
           )}
         </div>
 
@@ -81,13 +81,13 @@ export default async function ProductPage({ params }) {
             </tbody>
           </table>
 
-          
+          <a
             href={waLink}
             target="_blank"
             rel="noopener noreferrer"
             style={{ display: 'block', padding: '14px', background: '#25D366', color: 'white', borderRadius: '6px', textDecoration: 'none', textAlign: 'center', fontWeight: 'bold', fontSize: '16px', marginBottom: '12px' }}
           >
-            📱 Contact on WhatsApp
+            Contact on WhatsApp
           </a>
 
           <Link
