@@ -1,9 +1,13 @@
 import Link from 'next/link'
-import { createClient } from '@/lib/supabase/server'
+import { createClient as createServerClient } from '@/lib/supabase/server'
+import { createClient } from '@supabase/supabase-js'
 import ProductCard from './components/ProductCard'
 
 export default async function HomePage({ searchParams }) {
-  const supabase = await createClient()
+  const supabase = createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+  )
   const params = await searchParams
 
   let query = supabase
