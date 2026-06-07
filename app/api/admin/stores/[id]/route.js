@@ -6,7 +6,7 @@ export async function PATCH(request, { params }) {
 
   const { data: { user } } = await supabase.auth.getUser()
 
-  if (!user || user.email !== process.env.NEXT_PUBLIC_ADMIN_EMAIL) {
+  if (!user || user.email !== 'alamlaptopsellers@gmail.com') {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
