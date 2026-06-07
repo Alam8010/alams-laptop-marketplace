@@ -1,99 +1,168 @@
-'use client'
+"use client";
 
-import { useState } from 'react'
-import { createClient } from '@/lib/supabase/client'
+import { useState } from "react";
+import { createClient } from "@/lib/supabase/client";
+import Link from "next/link";
 
 export default function SignupPage() {
-  const supabase = createClient()
+  const supabase = createClient();
 
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [fullName, setFullName] = useState('')
-  const [storeName, setStoreName] = useState('')
-  const [whatsapp, setWhatsapp] = useState('')
-  const [error, setError] = useState('')
-  const [loading, setLoading] = useState(false)
-  const [done, setDone] = useState(false)
+  const [formData, setFormData] = useState({
+    fullName: "",
+    email: "",
+    password: "",
+    storeName: "",
+    whatsapp: "",
+  });
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
 
-  async function handleSignup(e) {
-    e.preventDefault()
-    setError('')
-    setLoading(true)
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
 
-    const { data, error: signupError } = await supabase.auth.signUp({ email, password })
+  const handleSignup = async (e) => {
+    e.preventDefault();
+    setError("");
+    setLoading(true);
 
-    if (signupError) {
-      setError(signupError.message)
-      setLoading(false)
-      return
+    const { data, error: signUpError } = await supabase.auth.signUp({
+      email: formData.email,
+      password: formData.password,
+    });
+
+    if (signUpError) {
+      setError(signUpError.message);
+      setLoading(false);
+      return;
     }
 
-    const userId = data.user?.id
+    const userId = data.user?.id;
 
     if (userId) {
-      const res = await fetch('/api/create-store', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          userId,
-          fullName,
-          storeName,
-          whatsappNumber: whatsapp,
-        }),
-      })
+      await supabase
+        .from("profiles")
+        .update({ full_name: formData.fullName })
+        .eq("id", userId);
 
-      const result = await res.json()
-
-      if (!res.ok) {
-        setError(result.error || 'Something went wrong')
-        setLoading(false)
-        return
-      }
+      await supabase.from("stores").insert({
+        owner_id: userId,
+        store_name: formData.storeName,
+        whatsapp_number: formData.whatsapp,
+        status: "pending",
+      });
     }
 
-    setLoading(false)
-    setDone(true)
-  }
+    setLoading(false);
+    setSubmitted(true);
+  };
 
-  if (done) {
+  if (submitted) {
     return (
-      <div style={{ padding: '40px', maxWidth: '400px', margin: '0 auto' }}>
-        <h2>Check your email</h2>
-        <p>We sent a confirmation link to <strong>{email}</strong>.</p>
-        <p>Once confirmed, your store application will be reviewed by the admin.</p>
+      <div className="auth-page">
+        <div className="auth-card">
+          <h1 className="auth-title">Application Submitted!</h1>
+          <p className="auth-subtitle">
+            Check your email to confirm your account. Once confirmed, your store
+            application will be reviewed by our team.
+          </p>
+          <Link href="/" className="btn-primary btn-full">
+            Back to Homepage
+          </Link>
+        </div>
       </div>
-    )
+    );
   }
 
   return (
-    <div style={{ padding: '40px', maxWidth: '400px', margin: '0 auto' }}>
-      <h1>Apply for a Store — laptopsellers</h1>
-      <form onSubmit={handleSignup}>
-        <div style={{ marginBottom: '12px' }}>
-          <label>Full Name</label><br />
-          <input value={fullName} onChange={e => setFullName(e.target.value)} required style={{ width: '100%', padding: '8px' }} />
-        </div>
-        <div style={{ marginBottom: '12px' }}>
-          <label>Email</label><br />
-          <input type="email" value={email} onChange={e => setEmail(e.target.value)} required style={{ width: '100%', padding: '8px' }} />
-        </div>
-        <div style={{ marginBottom: '12px' }}>
-          <label>Password</label><br />
-          <input type="password" value={password} onChange={e => setPassword(e.target.value)} required style={{ width: '100%', padding: '8px' }} />
-        </div>
-        <div style={{ marginBottom: '12px' }}>
-          <label>Store Name</label><br />
-          <input value={storeName} onChange={e => setStoreName(e.target.value)} required style={{ width: '100%', padding: '8px' }} />
-        </div>
-        <div style={{ marginBottom: '12px' }}>
-          <label>WhatsApp Number (with country code, e.g. 923001234567)</label><br />
-          <input value={whatsapp} onChange={e => setWhatsapp(e.target.value)} required style={{ width: '100%', padding: '8px' }} />
-        </div>
-        {error && <p style={{ color: 'red' }}>{error}</p>}
-        <button type="submit" disabled={loading} style={{ padding: '10px 20px' }}>
-          {loading ? 'Submitting...' : 'Submit Application'}
-        </button>
-      </form>
+    <div className="auth-page">
+      <div className="auth-card">
+        <h1 className="auth-title">Apply for a Store</h1>
+        <p className="auth-subtitle">Start selling laptops on laptopsellers</p>
+
+        <form onSubmit={handleSignup}>
+          <div className="input-group">
+            <input
+              type="text"
+              id="fullName"
+              name="fullName"
+              value={formData.fullName}
+              onChange={handleChange}
+              required
+              placeholder=" "
+            />
+            <label htmlFor="fullName">Full Name</label>
+          </div>
+
+          <div className="input-group">
+            <input
+              type="email"
+              id="email"
+              name="email"
+              value={formData.email}
+              onChange={handleChange}
+              required
+              placeholder=" "
+            />
+            <label htmlFor="email">Email</label>
+          </div>
+
+          <div className="input-group">
+            <input
+              type="password"
+              id="password"
+              name="password"
+              value={formData.password}
+              onChange={handleChange}
+              required
+              placeholder=" "
+            />
+            <label htmlFor="password">Password</label>
+          </div>
+
+          <div className="input-group">
+            <input
+              type="text"
+              id="storeName"
+              name="storeName"
+              value={formData.storeName}
+              onChange={handleChange}
+              required
+              placeholder=" "
+            />
+            <label htmlFor="storeName">Store Name</label>
+          </div>
+
+          <div className="input-group">
+            <input
+              type="tel"
+              id="whatsapp"
+              name="whatsapp"
+              value={formData.whatsapp}
+              onChange={handleChange}
+              required
+              placeholder=" "
+            />
+            <label htmlFor="whatsapp">WhatsApp Number</label>
+          </div>
+
+          {error && <p className="auth-error">{error}</p>}
+
+          <button
+            type="submit"
+            className="btn-primary btn-full"
+            disabled={loading}
+          >
+            {loading ? "Submitting..." : "Apply Now"}
+          </button>
+        </form>
+
+        <p className="auth-footer">
+          Already have an account?{" "}
+          <Link href="/login">Sign in</Link>
+        </p>
+      </div>
     </div>
-  )
+  );
 }

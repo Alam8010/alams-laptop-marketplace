@@ -1,57 +1,89 @@
-'use client'
+"use client";
 
-import { useState } from 'react'
-import { createClient } from '@/lib/supabase/client'
-import { useRouter } from 'next/navigation'
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { createClient } from "@/lib/supabase/client";
+import Link from "next/link";
 
 export default function LoginPage() {
-  const supabase = createClient()
-  const router = useRouter()
+  const router = useRouter();
+  const supabase = createClient();
 
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [error, setError] = useState('')
-  const [loading, setLoading] = useState(false)
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  async function handleLogin(e) {
-    e.preventDefault()
-    setError('')
-    setLoading(true)
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    setError("");
+    setLoading(true);
 
-    const { error: loginError } = await supabase.auth.signInWithPassword({ email, password })
+    const { error: loginError } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
 
     if (loginError) {
-      setError(loginError.message)
-      setLoading(false)
-      return
+      setError(loginError.message);
+      setLoading(false);
+      return;
     }
 
-    if (email === 'alamlaptopsellers@gmail.com') {
-      router.push('/admin')
-      return
+    if (email === process.env.NEXT_PUBLIC_ADMIN_EMAIL) {
+      router.push("/admin");
+    } else {
+      router.push("/dashboard");
     }
-
-    router.push('/dashboard')
-  }
+  };
 
   return (
-    <div style={{ padding: '40px', maxWidth: '400px', margin: '0 auto' }}>
-      <h1>Login — laptopsellers</h1>
-      <form onSubmit={handleLogin}>
-        <div style={{ marginBottom: '12px' }}>
-          <label>Email</label><br />
-          <input type="email" value={email} onChange={e => setEmail(e.target.value)} required style={{ width: '100%', padding: '8px' }} />
-        </div>
-        <div style={{ marginBottom: '12px' }}>
-          <label>Password</label><br />
-          <input type="password" value={password} onChange={e => setPassword(e.target.value)} required style={{ width: '100%', padding: '8px' }} />
-        </div>
-        {error && <p style={{ color: 'red' }}>{error}</p>}
-        <button type="submit" disabled={loading} style={{ padding: '10px 20px' }}>
-          {loading ? 'Logging in...' : 'Login'}
-        </button>
-      </form>
-      <p style={{ marginTop: '16px' }}>Want to sell? <a href="/signup">Apply for a store</a></p>
+    <div className="auth-page">
+      <div className="auth-card">
+        <h1 className="auth-title">Store Owner Login</h1>
+        <p className="auth-subtitle">Sign in to manage your store</p>
+
+        <form onSubmit={handleLogin}>
+          <div className="input-group">
+            <input
+              type="email"
+              id="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+              placeholder=" "
+            />
+            <label htmlFor="email">Email</label>
+          </div>
+
+          <div className="input-group">
+            <input
+              type="password"
+              id="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              placeholder=" "
+            />
+            <label htmlFor="password">Password</label>
+          </div>
+
+          {error && <p className="auth-error">{error}</p>}
+
+          <button
+            type="submit"
+            className="btn-primary btn-full"
+            disabled={loading}
+          >
+            {loading ? "Signing in..." : "Sign In"}
+          </button>
+        </form>
+
+        <p className="auth-footer">
+          Want to sell laptops?{" "}
+          <Link href="/signup">Apply for a store</Link>
+        </p>
+      </div>
     </div>
-  )
+  );
 }
