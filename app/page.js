@@ -1,5 +1,4 @@
 import Link from 'next/link'
-import { createClient as createServerClient } from '@/lib/supabase/server'
 import { createClient } from '@supabase/supabase-js'
 import ProductCard from './components/ProductCard'
 
@@ -12,8 +11,7 @@ export default async function HomePage({ searchParams }) {
 
   let query = supabase
     .from('products')
-    .select('id, title, brand, price, ram, storage, condition, images, store_id, stores!inner(id, store_name, status)')
-    .eq('stores.status', 'approved')
+    .select('id, title, brand, price, ram, storage, condition, images, store_id, stores(id, store_name, status)')
     .order('created_at', { ascending: false })
 
   if (params.brand) query = query.eq('brand', params.brand)
@@ -23,7 +21,10 @@ export default async function HomePage({ searchParams }) {
   if (params.min_price) query = query.gte('price', params.min_price)
   if (params.max_price) query = query.lte('price', params.max_price)
 
-  const { data: products } = await query
+  const { data: allProducts } = await query
+
+  // Filter approved stores client-side after fetch
+  const products = (allProducts || []).filter(p => p.stores?.status === 'approved')
 
   const BRANDS = ['Dell', 'HP', 'Lenovo', 'Apple', 'Asus', 'Acer', 'MSI', 'Samsung', 'Toshiba', 'Other']
   const RAM_OPTIONS = ['4GB', '8GB', '12GB', '16GB', '32GB', '64GB']
@@ -67,11 +68,11 @@ export default async function HomePage({ searchParams }) {
 
       {/* Results count */}
       <p style={{ color: '#666', marginBottom: '16px', fontSize: '14px' }}>
-        {products ? `${products.length} laptop${products.length !== 1 ? 's' : ''} found` : 'Loading...'}
+        {products.length} laptop{products.length !== 1 ? 's' : ''} found
       </p>
 
       {/* Product Grid */}
-      {(!products || products.length === 0) ? (
+      {products.length === 0 ? (
         <div style={{ textAlign: 'center', padding: '60px 0', color: '#888' }}>
           <p style={{ fontSize: '18px' }}>No laptops found matching your filters.</p>
           <a href="/">Clear filters</a>
