@@ -26,8 +26,7 @@ export default function LoginPage() {
       return
     }
 
-    const adminEmail = process.env.NEXT_PUBLIC_ADMIN_EMAIL
-    if (email === adminEmail) {
+    if (email === 'alamlaptopsellers@gmail.com') {
       router.push('/admin')
       return
     }
