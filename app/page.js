@@ -1,4 +1,3 @@
-import Link from 'next/link'
 import { createClient } from '@supabase/supabase-js'
 import ProductCard from './components/ProductCard'
 
@@ -33,47 +32,39 @@ export default async function HomePage({ searchParams }) {
 
   return (
     <div style={{ maxWidth: '1100px', margin: '0 auto', padding: '24px 16px' }}>
-      {/* Header */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px', borderBottom: '1px solid #eee', paddingBottom: '16px' }}>
-        <h1 style={{ margin: 0, fontSize: '24px' }}>💻 laptopsellers</h1>
-        <div style={{ display: 'flex', gap: '12px' }}>
-          <Link href="/login" style={{ textDecoration: 'none', color: '#333' }}>Login</Link>
-          <Link href="/signup" style={{ textDecoration: 'none', padding: '8px 16px', background: '#000', color: '#fff', borderRadius: '4px' }}>Sell a Laptop</Link>
-        </div>
-      </div>
 
       {/* Filters */}
-      <form method="GET" style={{ display: 'flex', flexWrap: 'wrap', gap: '10px', marginBottom: '24px', padding: '16px', background: '#f9f9f9', borderRadius: '6px' }}>
-        <select name="brand" defaultValue={params.brand ?? ''} style={{ padding: '7px', borderRadius: '4px', border: '1px solid #ccc' }}>
+      <form method="GET" style={{ display: 'flex', flexWrap: 'wrap', gap: '10px', marginBottom: '24px', padding: '16px', background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: '6px' }}>
+        <select name="brand" defaultValue={params.brand ?? ''} style={{ padding: '7px', borderRadius: '4px', border: '1px solid var(--border)', background: 'var(--input-bg)', color: 'var(--text)' }}>
           <option value="">All Brands</option>
           {BRANDS.map(b => <option key={b} value={b}>{b}</option>)}
         </select>
-        <select name="ram" defaultValue={params.ram ?? ''} style={{ padding: '7px', borderRadius: '4px', border: '1px solid #ccc' }}>
+        <select name="ram" defaultValue={params.ram ?? ''} style={{ padding: '7px', borderRadius: '4px', border: '1px solid var(--border)', background: 'var(--input-bg)', color: 'var(--text)' }}>
           <option value="">All RAM</option>
           {RAM_OPTIONS.map(r => <option key={r} value={r}>{r}</option>)}
         </select>
-        <select name="storage" defaultValue={params.storage ?? ''} style={{ padding: '7px', borderRadius: '4px', border: '1px solid #ccc' }}>
+        <select name="storage" defaultValue={params.storage ?? ''} style={{ padding: '7px', borderRadius: '4px', border: '1px solid var(--border)', background: 'var(--input-bg)', color: 'var(--text)' }}>
           <option value="">All Storage</option>
           {STORAGE_OPTIONS.map(s => <option key={s} value={s}>{s}</option>)}
         </select>
-        <select name="condition" defaultValue={params.condition ?? ''} style={{ padding: '7px', borderRadius: '4px', border: '1px solid #ccc' }}>
+        <select name="condition" defaultValue={params.condition ?? ''} style={{ padding: '7px', borderRadius: '4px', border: '1px solid var(--border)', background: 'var(--input-bg)', color: 'var(--text)' }}>
           <option value="">All Conditions</option>
           {CONDITIONS.map(c => <option key={c} value={c}>{c}</option>)}
         </select>
-        <input name="min_price" type="number" placeholder="Min Price (PKR)" defaultValue={params.min_price ?? ''} style={{ padding: '7px', borderRadius: '4px', border: '1px solid #ccc', width: '150px' }} />
-        <input name="max_price" type="number" placeholder="Max Price (PKR)" defaultValue={params.max_price ?? ''} style={{ padding: '7px', borderRadius: '4px', border: '1px solid #ccc', width: '150px' }} />
-        <button type="submit" style={{ padding: '7px 16px', background: '#000', color: '#fff', border: 'none', borderRadius: '4px', cursor: 'pointer' }}>Filter</button>
-        <a href="/" style={{ padding: '7px 16px', border: '1px solid #ccc', borderRadius: '4px', textDecoration: 'none', color: '#333' }}>Clear</a>
+        <input name="min_price" type="number" placeholder="Min Price (PKR)" defaultValue={params.min_price ?? ''} style={{ padding: '7px', borderRadius: '4px', border: '1px solid var(--border)', background: 'var(--input-bg)', color: 'var(--text)', width: '150px' }} />
+        <input name="max_price" type="number" placeholder="Max Price (PKR)" defaultValue={params.max_price ?? ''} style={{ padding: '7px', borderRadius: '4px', border: '1px solid var(--border)', background: 'var(--input-bg)', color: 'var(--text)', width: '150px' }} />
+        <button type="submit" style={{ padding: '7px 16px', background: 'var(--text)', color: 'var(--bg)', border: 'none', borderRadius: '4px', cursor: 'pointer' }}>Filter</button>
+        <a href="/" style={{ padding: '7px 16px', border: '1px solid var(--border)', borderRadius: '4px', textDecoration: 'none', color: 'var(--text)' }}>Clear</a>
       </form>
 
       {/* Results count */}
-      <p style={{ color: '#666', marginBottom: '16px', fontSize: '14px' }}>
+      <p style={{ color: 'var(--text-muted)', marginBottom: '16px', fontSize: '14px' }}>
         {products.length} laptop{products.length !== 1 ? 's' : ''} found
       </p>
 
       {/* Product Grid */}
       {products.length === 0 ? (
-        <div style={{ textAlign: 'center', padding: '60px 0', color: '#888' }}>
+        <div style={{ textAlign: 'center', padding: '60px 0', color: 'var(--text-muted)' }}>
           <p style={{ fontSize: '18px' }}>No laptops found matching your filters.</p>
           <a href="/">Clear filters</a>
         </div>
