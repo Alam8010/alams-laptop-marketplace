@@ -289,8 +289,8 @@ a {
 
 /* ===== Navbar ===== */
 .navbar {
-  background: #fff;
-  border-bottom: 1px solid #e5e7eb;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
   position: sticky;
   top: 0;
   z-index: 100;
@@ -309,7 +309,7 @@ a {
 .navbar-brand {
   font-size: 1.25rem;
   font-weight: 700;
-  color: #111;
+  color: var(--text);
   text-decoration: none;
   letter-spacing: -0.5px;
 }
@@ -320,48 +320,49 @@ a {
   gap: 0.75rem;
 }
 
-/* ===== Buttons ===== */
-.btn-primary {
-  background: #111;
-  color: #fff;
+/* ===== Navbar Buttons ===== */
+.btn-nav-primary {
+  background: var(--text);
+  color: var(--bg);
   border: none;
-  padding: 0.5rem 1.25rem;
-  border-radius: 6px;
-  font-size: 0.875rem;
-  font-weight: 500;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
   cursor: pointer;
   text-decoration: none;
   display: inline-block;
-  transition: background 0.15s;
+  transition: opacity 0.2s;
+  font-family: inherit;
 }
 
-.btn-primary:hover { background: #333; }
-
-.btn-primary:disabled {
-  background: #999;
-  cursor: not-allowed;
-}
+.btn-nav-primary:hover { opacity: 0.8; }
 
 .btn-outline {
   background: transparent;
-  color: #111;
-  border: 1px solid #d1d5db;
-  padding: 0.5rem 1.25rem;
-  border-radius: 6px;
-  font-size: 0.875rem;
-  font-weight: 500;
+  color: var(--text);
+  border: 1.5px solid var(--border);
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
   cursor: pointer;
   text-decoration: none;
   display: inline-block;
-  transition: border-color 0.15s;
+  transition: border-color 0.2s, background 0.2s;
+  font-family: inherit;
 }
 
-.btn-outline:hover { border-color: #111; }
+.btn-outline:hover {
+  border-color: var(--text);
+  background: var(--surface-hover);
+}
 
 .btn-full {
   width: 100%;
   text-align: center;
-  padding: 0.75rem 1.25rem;
+  display: block;
+  box-sizing: border-box;
 }
 
 /* ===== Auth Pages ===== */
@@ -371,12 +372,12 @@ a {
   align-items: center;
   justify-content: center;
   padding: 2rem 1rem;
-  background: #f9fafb;
+  background: var(--bg);
 }
 
 .auth-card {
-  background: #fff;
-  border: 1px solid #e5e7eb;
+  background: var(--surface);
+  border: 1px solid var(--border);
   border-radius: 12px;
   padding: 2rem;
   width: 100%;
@@ -386,18 +387,18 @@ a {
 .auth-title {
   font-size: 1.5rem;
   font-weight: 700;
-  color: #111;
+  color: var(--text);
   margin-bottom: 0.25rem;
 }
 
 .auth-subtitle {
   font-size: 0.875rem;
-  color: #6b7280;
+  color: var(--text-muted);
   margin-bottom: 1.5rem;
 }
 
 .auth-error {
-  color: #dc2626;
+  color: var(--error);
   font-size: 0.875rem;
   margin-bottom: 1rem;
 }
@@ -405,12 +406,21 @@ a {
 .auth-footer {
   text-align: center;
   font-size: 0.875rem;
-  color: #6b7280;
+  color: var(--text-muted);
   margin-top: 1.25rem;
 }
 
 .auth-footer a {
-  color: #111;
+  color: var(--text);
   font-weight: 500;
   text-decoration: underline;
+}
+
+/* ===== Mobile Navbar ===== */
+@media (max-width: 520px) {
+  .navbar-inner { padding: 0 1rem; }
+  .navbar-links { gap: 0.4rem; }
+  .navbar-brand { font-size: 0.95rem; }
+  .btn-outline,
+  .btn-nav-primary { padding: 6px 10px; font-size: 12px; }
 }

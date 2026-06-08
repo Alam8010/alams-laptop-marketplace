@@ -26,7 +26,7 @@ export default function RootLayout({ children }) {
             <Link href="/" className="navbar-brand">laptopsellers</Link>
             <div className="navbar-links">
               <Link href="/signup" className="btn-outline">Apply for a Store</Link>
-              <Link href="/login" className="btn-primary">Store Owner Login</Link>
+              <Link href="/login" className="btn-nav-primary">Store Owner Login</Link>
             </div>
           </div>
         </nav>

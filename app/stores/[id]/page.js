@@ -26,10 +26,9 @@ export default async function StorePage({ params }) {
 
   return (
     <div style={{ maxWidth: '1000px', margin: '0 auto', padding: '24px 16px' }}>
-      {/* Header */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px', borderBottom: '1px solid #eee', paddingBottom: '16px' }}>
-        <Link href="/" style={{ textDecoration: 'none', color: '#000', fontWeight: 'bold', fontSize: '20px' }}>💻 laptopsellers</Link>
-        <Link href="/" style={{ textDecoration: 'none', color: '#555' }}>← All listings</Link>
+      {/* Back link */}
+      <div style={{ marginBottom: '24px' }}>
+        <Link href="/" style={{ textDecoration: 'none', color: 'var(--text-muted)', fontSize: '14px' }}>← All listings</Link>
       </div>
 
       {/* Store Info */}
