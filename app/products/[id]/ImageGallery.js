@@ -7,7 +7,7 @@ export default function ImageGallery({ images, title }) {
 
   if (!images || images.length === 0) {
     return (
-      <div style={{ width: '100%', height: '280px', background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '60px' }}>💻</div>
+      <div style={{ width: '100%', height: '280px', background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '60px' }}>&#x1F4BB;</div>
     )
   }
 
