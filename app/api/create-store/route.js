@@ -7,7 +7,7 @@ const supabaseAdmin = createClient(
 )
 
 export async function POST(request) {
-  const { userId, fullName, storeName, whatsappNumber } = await request.json()
+  const { userId, fullName, storeName, whatsappNumber, phoneNumber, address } = await request.json()
 
   if (!userId) {
     return NextResponse.json({ error: 'Missing user ID' }, { status: 400 })
@@ -28,6 +28,8 @@ export async function POST(request) {
       owner_id: userId,
       store_name: storeName,
       whatsapp_number: whatsappNumber,
+      phone_number: phoneNumber,
+      address: address,
       status: 'pending',
     })
 

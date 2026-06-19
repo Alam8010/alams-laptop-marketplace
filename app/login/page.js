@@ -68,6 +68,12 @@ export default function LoginPage() {
             <label htmlFor="password">Password</label>
           </div>
 
+          <div style={{ textAlign: 'right', marginTop: '-12px', marginBottom: '16px' }}>
+            <Link href="/forgot-password" style={{ fontSize: '13px', color: 'var(--text-muted)' }}>
+              Forgot password?
+            </Link>
+          </div>
+
           {error && <p className="auth-error">{error}</p>}
 
           <button
