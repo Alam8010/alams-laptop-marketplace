@@ -1,113 +1,194 @@
-import { createClient } from '@/lib/supabase/server'
-import { notFound } from 'next/navigation'
-import Image from 'next/image'
+import { createClient } from '@supabase/supabase-js'
+import ProductCard from './components/ProductCard'
+import SearchBar from './components/SearchBar'
 import Link from 'next/link'
+import SearchBar from './components/SearchBar'
 
-export default async function StorePage({ params }) {
-  const supabase = await createClient()
-  const { id } = await params
+const BRANDS          = ['Dell','HP','Lenovo','Apple','Asus','Acer','MSI','Samsung','Toshiba','Other']
+const RAM_OPTIONS     = ['4GB','8GB','12GB','16GB','32GB','64GB']
+const STORAGE_OPTIONS = ['128GB','256GB','512GB','1TB','2TB']
+const CONDITIONS      = ['New','Like New','Good','Fair']
 
-  const { data: store } = await supabase
-    .from('stores')
-    .select('*')
-    .eq('id', id)
-    .eq('status', 'approved')
-    .single()
+export default async function HomePage({ searchParams }) {
+  const supabase = createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+  )
+  const params = await searchParams
 
-  if (!store) notFound()
-
-  const { data: products } = await supabase
+  let query = supabase
     .from('products')
-    .select('*')
-    .eq('store_id', id)
+    .select('id, title, brand, price, ram, storage, condition, images, store_id, stores(id, store_name, status)')
     .order('created_at', { ascending: false })
 
-  const waLink = `https://wa.me/${store.whatsapp_number}?text=${encodeURIComponent('Hi, I found your store on laptopsellers and I have a question.')}`
+  if (params.search)    query = query.ilike('title', `%${params.search}%`)
+  if (params.brand)     query = query.eq('brand', params.brand)
+  if (params.ram)       query = query.eq('ram', params.ram)
+  if (params.storage)   query = query.eq('storage', params.storage)
+  if (params.condition) query = query.eq('condition', params.condition)
+  if (params.min_price) query = query.gte('price', params.min_price)
+  if (params.max_price) query = query.lte('price', params.max_price)
+
+  const { data: allProducts } = await query
+  const products = (allProducts || []).filter(p => p.stores?.status === 'approved')
+
+  const hasFilters = params.search || params.brand || params.ram || params.storage || params.condition || params.min_price || params.max_price
 
   return (
-    <div style={{ maxWidth: '1000px', margin: '0 auto', padding: '24px 16px' }}>
+    <div style={{ minHeight: '100vh', background: 'var(--bg)' }}>
 
-      <div style={{ marginBottom: '24px' }}>
-        <Link href="/" style={{ textDecoration: 'none', color: 'var(--text-muted)', fontSize: '14px' }}>
-          ← All listings
-        </Link>
-      </div>
-
-      {/* Store Info */}
+      {/* HERO */}
       <div style={{
-        background: 'var(--surface)', border: '1px solid var(--border)',
-        borderRadius: '8px', padding: '24px', marginBottom: '32px',
-        display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start',
-        flexWrap: 'wrap', gap: '16px'
+        background: 'linear-gradient(180deg, #020c1b 0%, #051124 60%, #020c1b 100%)',
+        borderBottom: '1px solid var(--border)',
+        padding: '48px 16px 40px',
+        textAlign: 'center',
       }}>
-        <div>
-          <h1 style={{ margin: '0 0 8px', fontSize: '24px', color: 'var(--text)' }}>
-            {store.store_name}
+        <div style={{ maxWidth: '680px', margin: '0 auto' }}>
+          <div style={{
+            display: 'inline-block',
+            background: '#0a1e3d',
+            border: '1px solid #1e3a5f',
+            borderRadius: '20px',
+            padding: '4px 14px',
+            fontSize: '12px',
+            color: '#3b82f6',
+            fontWeight: '600',
+            letterSpacing: '0.5px',
+            marginBottom: '18px',
+            textTransform: 'uppercase',
+          }}>
+            Pakistan No.1 Laptop Marketplace
+          </div>
+          <h1 style={{
+            fontSize: 'clamp(28px, 5vw, 48px)',
+            fontWeight: '800',
+            color: '#e2e8f0',
+            lineHeight: '1.15',
+            marginBottom: '12px',
+            letterSpacing: '-1px',
+          }}>
+            Find Your <span style={{ color: '#3b82f6' }}>Perfect Laptop</span>
           </h1>
-          <div style={{ color: 'var(--text-muted)', fontSize: '14px', marginBottom: '4px' }}>
-            Member since {new Date(store.created_at).toLocaleDateString('en-PK', { year: 'numeric', month: 'long' })}
-          </div>
-          <div style={{ fontSize: '14px', color: 'var(--text-muted)', marginBottom: '4px' }}>
-            {products?.length ?? 0} listing{products?.length !== 1 ? 's' : ''}
-          </div>
-          {store.phone_number && (
-            <div style={{ fontSize: '14px', color: 'var(--text)', marginTop: '4px' }}>
-              📞 {store.phone_number}
-            </div>
-          )}
-          {store.address && (
-            <div style={{ fontSize: '14px', color: 'var(--text-muted)', marginTop: '4px' }}>
-              📍 {store.address}
-            </div>
-          )}
-        </div>
+          <p style={{
+            fontSize: '15px',
+            color: '#64748b',
+            marginBottom: '28px',
+            lineHeight: '1.6',
+          }}>
+            Browse laptops from verified sellers across Pakistan. New and used, all brands, all budgets.
+          </p>
 
-        <a
-          href={waLink}
-          target="_blank"
-          rel="noopener noreferrer"
-          style={{
-            padding: '12px 20px', background: '#25D366', color: 'white',
-            borderRadius: '6px', textDecoration: 'none', fontWeight: 'bold', flexShrink: 0
-          }}
-        >
-          💬 WhatsApp Store
-        </a>
+          {/* HERO SEARCH BAR */}
+          <div style={{ marginBottom: '20px' }}>
+            <SearchBar initialValue={params.search ?? ''} large />
+          </div>
+
+          <div style={{ marginBottom: '20px' }}>
+            <SearchBar initialValue={params.search ?? ''} large />
+          </div>
+
+          {/* Brand pills */}
+          <div style={{ display: 'flex', gap: '8px', justifyContent: 'center', flexWrap: 'wrap' }}>
+            {['Dell','HP','Lenovo','Apple','Asus'].map(brand => (
+              <Link key={brand} href={`/?brand=${brand}`} style={{
+                padding: '6px 16px',
+                background: '#0a1628',
+                border: '1px solid #1e3a5f',
+                borderRadius: '20px',
+                fontSize: '13px',
+                color: '#94a3b8',
+                textDecoration: 'none',
+              }}>
+                {brand}
+              </Link>
+            ))}
+          </div>
+        </div>
       </div>
 
-      {/* Products */}
-      {(!products || products.length === 0) ? (
-        <p style={{ color: 'var(--text-muted)', textAlign: 'center', padding: '40px 0' }}>
-          This store has no listings yet.
-        </p>
-      ) : (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', gap: '20px' }}>
-          {products.map(product => (
-            <Link key={product.id} href={`/products/${product.id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
-              <div style={{ background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: '8px', overflow: 'hidden' }}>
-                <div style={{ width: '100%', height: '160px', background: 'var(--bg)', position: 'relative' }}>
-                  {product.images && product.images.length > 0 ? (
-                    <Image src={product.images[0]} alt={product.title} fill style={{ objectFit: 'cover' }} sizes="240px" />
-                  ) : (
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%', fontSize: '36px' }}>💻</div>
-                  )}
-                </div>
-                <div style={{ padding: '12px' }}>
-                  <div style={{ fontWeight: 'bold', fontSize: '14px', marginBottom: '4px', color: 'var(--text)' }}>
-                    {product.title}
-                  </div>
-                  <div style={{ fontSize: '13px', color: 'var(--text-muted)' }}>
-                    {product.ram} · {product.storage} · {product.condition}
-                  </div>
-                  <div style={{ fontWeight: 'bold', marginTop: '6px', color: 'var(--text)' }}>
-                    PKR {Number(product.price).toLocaleString()}
-                  </div>
-                </div>
-              </div>
-            </Link>
+      <div style={{ maxWidth: '1100px', margin: '0 auto', padding: '28px 16px' }}>
+
+        {/* FILTER BAR */}
+        <form method="GET" style={{
+          display: 'flex', flexWrap: 'wrap', gap: '8px',
+          marginBottom: '20px', padding: '14px 16px',
+          background: 'var(--surface)',
+          border: '1px solid var(--border)',
+          borderRadius: '10px',
+          alignItems: 'center',
+        }}>
+          {params.search && <input type="hidden" name="search" value={params.search} />}
+
+          {[
+            { name: 'brand',     label: 'Brand',    options: BRANDS },
+            { name: 'ram',       label: 'RAM',       options: RAM_OPTIONS },
+            { name: 'storage',   label: 'Storage',   options: STORAGE_OPTIONS },
+            { name: 'condition', label: 'Condition', options: CONDITIONS },
+          ].map(({ name, label, options }) => (
+            <select key={name} name={name} defaultValue={params[name] ?? ''} style={{
+              padding: '8px 12px', borderRadius: '6px',
+              border: '1px solid var(--border)',
+              background: 'var(--input-bg)', color: 'var(--text)',
+              fontSize: '13px', cursor: 'pointer',
+            }}>
+              <option value="">All {label}s</option>
+              {options.map(o => <option key={o} value={o}>{o}</option>)}
+            </select>
           ))}
-        </div>
-      )}
+
+          <input name="min_price" type="number" placeholder="Min (PKR)"
+            defaultValue={params.min_price ?? ''}
+            style={{ padding: '8px 12px', borderRadius: '6px', border: '1px solid var(--border)', background: 'var(--input-bg)', color: 'var(--text)', fontSize: '13px', width: '120px' }} />
+          <input name="max_price" type="number" placeholder="Max (PKR)"
+            defaultValue={params.max_price ?? ''}
+            style={{ padding: '8px 12px', borderRadius: '6px', border: '1px solid var(--border)', background: 'var(--input-bg)', color: 'var(--text)', fontSize: '13px', width: '120px' }} />
+
+          <button type="submit" style={{
+            padding: '8px 20px', background: 'var(--primary)', color: '#fff',
+            border: 'none', borderRadius: '6px', cursor: 'pointer',
+            fontWeight: '600', fontSize: '13px',
+          }}>
+            Filter
+          </button>
+
+          {hasFilters && (
+            <Link href="/" style={{
+              padding: '8px 16px', border: '1px solid var(--border)',
+              borderRadius: '6px', textDecoration: 'none',
+              color: 'var(--text-muted)', fontSize: '13px',
+            }}>
+              Clear all
+            </Link>
+          )}
+        </form>
+
+        {/* RESULTS COUNT */}
+        <p style={{ color: 'var(--text-muted)', marginBottom: '20px', fontSize: '13px' }}>
+          {params.search
+            ? <span><span style={{ color: 'var(--text)' }}>{products.length}</span> result{products.length !== 1 ? 's' : ''} for &ldquo;<span style={{ color: '#3b82f6' }}>{params.search}</span>&rdquo;</span>
+            : <span>{products.length} laptop{products.length !== 1 ? 's' : ''} found</span>
+          }
+          {hasFilters && <span> &mdash; <Link href="/" style={{ color: 'var(--primary)' }}>Clear all</Link></span>}
+        </p>
+
+        {/* PRODUCT GRID */}
+        {products.length === 0 ? (
+          <div style={{ textAlign: 'center', padding: '80px 0', color: 'var(--text-muted)' }}>
+            <p style={{ fontSize: '16px', marginBottom: '8px' }}>
+              {params.search ? `No laptops found for "${params.search}"` : 'No laptops match your filters.'}
+            </p>
+            <Link href="/" style={{ color: 'var(--primary)', fontSize: '14px' }}>Clear all filters</Link>
+          </div>
+        ) : (
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: '20px' }}>
+            {products.map(product => (
+              <ProductCard key={product.id} product={product} />
+            ))}
+          </div>
+        )}
+
+      </div>
     </div>
   )
 }
