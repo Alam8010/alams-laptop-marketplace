@@ -1,8 +1,7 @@
 import { createClient } from '@supabase/supabase-js'
-import ProductCard from './components/ProductCard'
-import SearchBar from './components/SearchBar'
+import ProductCard from '@/app/components/ProductCard'
+import SearchBar from '@/app/components/SearchBar'
 import Link from 'next/link'
-import SearchBar from './components/SearchBar'
 
 const BRANDS          = ['Dell','HP','Lenovo','Apple','Asus','Acer','MSI','Samsung','Toshiba','Other']
 const RAM_OPTIONS     = ['4GB','8GB','12GB','16GB','32GB','64GB']
