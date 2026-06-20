@@ -55,7 +55,7 @@ export default function ProductCard({ product }) {
           <div style={{
             display: 'flex', gap: '6px', flexWrap: 'wrap', marginBottom: '10px',
           }}>
-            {[product.ram, product.storage, product.condition].map((tag, i) => (
+            {[product.processor_model, product.ram, product.storage, product.condition].filter(Boolean).map((tag, i) => (
               <span key={i} style={{
                 padding: '2px 8px',
                 background: '#0d1f3c',

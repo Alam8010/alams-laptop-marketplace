@@ -6,7 +6,15 @@ import { useRouter } from 'next/navigation'
 const BRANDS = ['Dell', 'HP', 'Lenovo', 'Apple', 'Asus', 'Acer', 'MSI', 'Samsung', 'Toshiba', 'Other']
 const RAM_OPTIONS = ['4GB', '8GB', '12GB', '16GB', '32GB', '64GB']
 const STORAGE_OPTIONS = ['128GB', '256GB', '512GB', '1TB', '2TB']
-const CONDITIONS = ['New', 'Like New', 'Good', 'Fair']
+const CONDITIONS       = ['New', 'Like New', 'Good', 'Fair']
+const PROCESSOR_BRANDS = ['Intel', 'AMD']
+const PROCESSOR_MODELS = ['Core i3', 'Core i5', 'Core i7', 'Core i9', 'Ryzen 3', 'Ryzen 5', 'Ryzen 7', 'Ryzen 9', 'Celeron', 'Pentium', 'M1', 'M2', 'M3']
+const GENERATIONS      = ['7th Gen', '8th Gen', '9th Gen', '10th Gen', '11th Gen', '12th Gen', '13th Gen', '14th Gen']
+const SCREEN_SIZES     = ['11-12 inch', '13-14 inch', '15-16 inch', '17 inch+']
+const GPU_TYPES        = ['Integrated', 'Dedicated']
+const GPU_BRANDS       = ['Nvidia', 'AMD Radeon', 'Intel Arc']
+const USE_CASES        = ['Gaming', 'Business', 'Student', 'General Use', 'Workstation']
+const DISPLAY_TYPES    = ['HD (720p)', 'FHD (1080p)', 'QHD (1440p)', '4K (2160p)']
 
 export default function ProductForm({ storeId, product }) {
   const router = useRouter()
@@ -19,6 +27,14 @@ export default function ProductForm({ storeId, product }) {
   const [storage, setStorage] = useState(product?.storage ?? '')
   const [condition, setCondition] = useState(product?.condition ?? '')
   const [description, setDescription] = useState(product?.description ?? '')
+  const [processorBrand, setProcessorBrand] = useState(product?.processor_brand ?? '')
+  const [processorModel, setProcessorModel] = useState(product?.processor_model ?? '')
+  const [generation, setGeneration] = useState(product?.generation ?? '')
+  const [screenSize, setScreenSize] = useState(product?.screen_size ?? '')
+  const [gpu, setGpu] = useState(product?.gpu ?? '')
+  const [gpuBrand, setGpuBrand] = useState(product?.gpu_brand ?? '')
+  const [useCase, setUseCase] = useState(product?.use_case ?? '')
+  const [displayType, setDisplayType] = useState(product?.display_type ?? '')
   const [images, setImages] = useState(product?.images ?? [])
   const [uploading, setUploading] = useState(false)
   const [saving, setSaving] = useState(false)
@@ -54,7 +70,7 @@ export default function ProductForm({ storeId, product }) {
     setError('')
     setSaving(true)
 
-    const payload = { title, brand, price: parseFloat(price), ram, storage, condition, description, images }
+    const payload = { title, brand, price: parseFloat(price), ram, storage, condition, description, images, processor_brand: processorBrand, processor_model: processorModel, generation, screen_size: screenSize, gpu, gpu_brand: gpuBrand, use_case: useCase, display_type: displayType }
 
     let res
     if (isEdit) {
@@ -133,6 +149,74 @@ export default function ProductForm({ storeId, product }) {
           <option value="">Select condition</option>
           {CONDITIONS.map(c => <option key={c} value={c}>{c}</option>)}
         </select>
+      </div>
+
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginBottom: '16px' }}>
+        <div>
+          <label style={labelStyle}>Processor Brand</label>
+          <select value={processorBrand} onChange={e => setProcessorBrand(e.target.value)} style={inputStyle}>
+            <option value="">Select processor brand</option>
+            {PROCESSOR_BRANDS.map(p => <option key={p} value={p}>{p}</option>)}
+          </select>
+        </div>
+        <div>
+          <label style={labelStyle}>Processor Model</label>
+          <select value={processorModel} onChange={e => setProcessorModel(e.target.value)} style={inputStyle}>
+            <option value="">Select processor model</option>
+            {PROCESSOR_MODELS.map(p => <option key={p} value={p}>{p}</option>)}
+          </select>
+        </div>
+      </div>
+
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginBottom: '16px' }}>
+        <div>
+          <label style={labelStyle}>Generation</label>
+          <select value={generation} onChange={e => setGeneration(e.target.value)} style={inputStyle}>
+            <option value="">Select generation</option>
+            {GENERATIONS.map(g => <option key={g} value={g}>{g}</option>)}
+          </select>
+        </div>
+        <div>
+          <label style={labelStyle}>Screen Size</label>
+          <select value={screenSize} onChange={e => setScreenSize(e.target.value)} style={inputStyle}>
+            <option value="">Select screen size</option>
+            {SCREEN_SIZES.map(s => <option key={s} value={s}>{s}</option>)}
+          </select>
+        </div>
+      </div>
+
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginBottom: '16px' }}>
+        <div>
+          <label style={labelStyle}>GPU Type</label>
+          <select value={gpu} onChange={e => setGpu(e.target.value)} style={inputStyle}>
+            <option value="">Select GPU type</option>
+            {GPU_TYPES.map(g => <option key={g} value={g}>{g}</option>)}
+          </select>
+        </div>
+        <div>
+          <label style={labelStyle}>GPU Brand</label>
+          <select value={gpuBrand} onChange={e => setGpuBrand(e.target.value)} style={inputStyle}>
+            <option value="">Select GPU brand</option>
+            {GPU_BRANDS.map(g => <option key={g} value={g}>{g}</option>)}
+          </select>
+        </div>
+      </div>
+
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginBottom: '16px' }}>
+        <div>
+          <label style={labelStyle}>Use Case</label>
+          <select value={useCase} onChange={e => setUseCase(e.target.value)} style={inputStyle}>
+            <option value="">Select use case</option>
+            {USE_CASES.map(u => <option key={u} value={u}>{u}</option>)}
+          </select>
+        </div>
+        <div>
+          <label style={labelStyle}>Display Type</label>
+          <select value={displayType} onChange={e => setDisplayType(e.target.value)} style={inputStyle}>
+            <option value="">Select display type</option>
+            {DISPLAY_TYPES.map(d => <option key={d} value={d}>{d}</option>)}
+          </select>
+        </div>
       </div>
 
       <div style={fieldStyle}>
