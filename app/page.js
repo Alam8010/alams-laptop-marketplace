@@ -1,5 +1,6 @@
 import { createClient } from '@supabase/supabase-js'
 import ProductCard from './components/ProductCard'
+import SearchBar from './components/SearchBar'
 import Link from 'next/link'
 
 const BRANDS          = ['Dell','HP','Lenovo','Apple','Asus','Acer','MSI','Samsung','Toshiba','Other']
@@ -19,6 +20,7 @@ export default async function HomePage({ searchParams }) {
     .select('id, title, brand, price, ram, storage, condition, images, store_id, stores(id, store_name, status)')
     .order('created_at', { ascending: false })
 
+  if (params.search)    query = query.ilike('title', `%${params.search}%`)
   if (params.brand)     query = query.eq('brand', params.brand)
   if (params.ram)       query = query.eq('ram', params.ram)
   if (params.storage)   query = query.eq('storage', params.storage)
@@ -98,6 +100,11 @@ export default async function HomePage({ searchParams }) {
       )}
 
       <div style={{ maxWidth: '1100px', margin: '0 auto', padding: '28px 16px' }}>
+
+        {/* SEARCH BAR */}
+        <div style={{ marginBottom: '16px' }}>
+          <SearchBar initialValue={params.search ?? ''} />
+        </div>
 
         {/* FILTER BAR */}
         <form method="GET" style={{
