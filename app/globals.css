@@ -34,6 +34,7 @@ body {
 }
 
 a { color: var(--primary); }
+select option { background: var(--input-bg); color: var(--text); }
 
 /* ── CARDS ── */
 .card {
